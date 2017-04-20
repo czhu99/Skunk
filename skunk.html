@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+<head>
+	<title>Skunk Game</title>
+	<link rel="stylesheet" href="skunk.css">
+	<script>
+	var imgs = ["./img/dice1.png", "./img/dice2.png", "./img/dice3.png", "./img/dice4.png", "./img/dice5.png", "./img/dice6.png"] 
+	/*taken from https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Dice_1-6.svg/1024px-Dice_1-6.svg.png 
+	and http://www.clipartkid.com/images/126/20-images-for-cartoon-skunk-displaying-20-images-for-cartoon-skunk-WaOXh6-clipart.jpg*/
+	
+	var player1Turns = 0;
+
+	var player1Score = 0;
+	var player2Score = 0;
+	
+	var tempScore = 0;
+	
+	var p1Turn = true;
+	
+	function rollDice() //displays images for dice and returns an int
+	{
+		var dice1 = Math.floor(Math.random() * 6 + 1);
+		var dice2 = Math.floor(Math.random() * 6 + 1);
+		document.getElementById("leftDice").src= imgs[dice1 - 1];
+		document.getElementById("rightDice").src=imgs[dice2 - 1];
+
+		if((dice1 == 1 && dice2 != 1) || dice2 == 1 && dice1 != 1)
+			return 0; //if single skunk returns 0
+		else if(dice1 == 1 && dice2 == 1)
+			return -1; //if double skunk returns -1
+		else
+			return dice1 + dice2; //if no skunk, function returns sum of dice value
+	}
+	
+	function onePlayer() //runs every time button is pushed in 1 player mode
+	{
+		if(player1Score < 100)
+		{
+			var tempRoll = rollDice();
+			if(tempRoll == 0)
+				player1Score += 0;
+			else if(tempRoll == -1)
+				player1Score = 0;
+			else
+				player1Score += tempRoll;			
+			player1Turns++					
+
+			document.getElementById("p1Scores").innerHTML = "Total Score: " + player1Score;
+			document.getElementById("p1Turns").innerHTML = "Turns taken: " + player1Turns;
+		}
+		if(player1Score >= 100)
+		{
+			document.getElementById("endMsg").innerHTML = "You reached 100 points in " + player1Turns + " turns.";
+			document.getElementById("refresh").removeAttribute("hidden");
+		}
+	}
+	
+	function twoPlayer() //runs every time button is pushed in 2 player mode
+	{
+		if(p1Turn == true)
+		{
+			document.getElementById("turn").innerHTML = "Player 1's Turn"
+			
+			if(player1Score < 100 && player2Score <100)
+			{
+				var tempRoll = rollDice();
+				if(tempRoll == 0)
+				{
+					p1Turn = false;
+					tempScore = 0;
+					document.getElementById("turn").innerHTML = "Player 2's Turn";					
+				}
+				else if(tempRoll == -1)
+				{
+					player1Score = 0;
+					p1Turn = false;
+					tempScore = 0;
+					document.getElementById("turn").innerHTML = "Player 2's Turn";
+				}	
+				else
+					tempScore += tempRoll;															
+			}			
+		}
+		
+		else
+		{
+			document.getElementById("turn").innerHTML = "Player 2's Turn";
+			
+			if(player2Score < 100 && player1Score <100)
+			{
+				var tempRoll = rollDice();
+				if(tempRoll == 0)
+				{
+					p1Turn = true;
+					tempScore = 0;
+					document.getElementById("turn").innerHTML = "Player 1's Turn";
+				}
+				else if(tempRoll == -1)
+				{
+					player2Score = 0;
+					p1Turn = true;
+					tempScore = 0;
+					document.getElementById("turn").innerHTML = "Player 1's Turn";
+				}	
+				else
+					tempScore += tempRoll;	
+			}			
+		}
+			document.getElementById("p1Scores").innerHTML = "Player 1 Total Score: " + player1Score;
+			document.getElementById("p2Scores").innerHTML = "Player 2 Total Score: " + player2Score;
+			document.getElementById("temp").innerHTML = "Current Round Score: " + tempScore;		
+	}
+	
+	function clearOne() //Displays correct HTML elements for one player game
+	{
+		document.getElementById("intro").setAttribute("hidden", true);
+		document.getElementById("single").setAttribute("hidden", true);
+		document.getElementById("double").setAttribute("hidden", true);
+		document.getElementById("diceRollOneP").removeAttribute("hidden");		
+		document.getElementById("skunk").style.display = "none"
+	}
+	
+	function clearTwo() //Displays correct HTML elements for two player game
+	{
+		document.getElementById("intro").setAttribute("hidden", true);
+		document.getElementById("single").setAttribute("hidden", true);
+		document.getElementById("double").setAttribute("hidden", true);
+		document.getElementById("diceRollTwoP").removeAttribute("hidden");
+		document.getElementById("switchP").removeAttribute("hidden");
+		document.getElementById("skunk").style.display = "none"
+		
+		document.getElementById("turn").innerHTML = "Player 1's Turn";
+		
+	}
+	
+	function endTurn() //passes dice
+	{	
+		if(p1Turn == true)
+		{
+			p1Turn = false;
+			document.getElementById("turn").innerHTML = "Player 2's Turn"
+			player1Score += tempScore;
+			tempScore = 0;
+			document.getElementById("p1Scores").innerHTML = "Player 1 Total Score: " + player1Score;
+		}
+		else
+		{
+			p1Turn = true;
+			document.getElementById("turn").innerHTML = "Player 1's Turn"
+			player2Score += tempScore;
+			tempScore = 0;	
+			document.getElementById("p2Scores").innerHTML = "Player 2 Total Score: " + player2Score;
+		}
+		
+		if(player1Score >= 100)	
+		{
+			document.getElementById("turn").innerHTML = "Player 1 wins!";
+			document.getElementById("refresh").removeAttribute("hidden");
+		}	
+
+		if(player2Score >= 100)	
+		{
+			document.getElementById("turn").innerHTML = "Player 2 wins!";
+			document.getElementById("refresh").removeAttribute("hidden");
+		}		
+		document.getElementById("temp").innerHTML = "Current Round Score: " + tempScore;
+	}
+	</script>
+</head>
+
+<body>	
+	<h1 id = "title" >Welcome to Skunk</h1>
+	<p id = "intro"> Skunk is a 1 or 2 player dice game in which the objective of the game is to reach a score of 100. The game is played with two six-sided dice.  Each die face has the number 2, 3, 4, 5, 6 or a picture of a skunk on it.  The player rolls both dice as many times as desired.  This is considered one round.  Points are added to a round score for each roll that doesn't include a skunk.  When the player decides to stop a round (and hasn't rolled a skunk) the round score is added to the player's total score.  When the player's total score reaches (or exceeds) 100 the player wins the game.  Skunk rolls are handled as follows:<br><br>
+· If one skunk is rolled the player's turn is over.  Player passes the dice to the other player and no points are added to his/her total score.<br><br>
+· If two skunks are rolled the player's turn is over. Player passes the dice to the other player and the player's total score is set back to zero (player loses all accumulated points).<br><br>
+To play, select either a one or two player game below. When the Roll Dice button is clicked, the relevant game information will be displayed below. To end your current turn and add the points from your rolls in 2 player mode, press end turn. </p>
+	
+	<img class = "img-main" id = "skunk" src = "./img/skunk.jpg" align = "middle" ><br>
+	<!-- taken from http://orig15.deviantart.net/a3b9/f/2009/279/d/1/blue_skunk_by_ursulav.jpg -->
+	
+	<div class = "wrapper">
+	<button id ="single" type = "button" onclick = "clearOne()">Start Single Player Game</button>
+	<button id ="double" type = "button" onclick = "clearTwo()">Start Two Player Game</button>
+	</div>
+	
+	<div id = "dice">
+	<img class = "img-dice" id = leftDice></img>
+	<img class = "img-dice" id = rightDice></img><br>
+	</div> <br>
+	
+	<div class = "wrapper">
+	<button hidden id = "diceRollOneP" type = "button" onclick = "onePlayer()">Roll Dice</button>
+	<button hidden id = "diceRollTwoP" type = "button" onclick = "twoPlayer()">Roll Dice</button>
+	<button hidden id = "switchP" type = "button" onclick = "endTurn()">End Turn</button>
+	
+	<h2 id = "turn"></h2>
+	
+	<h2 id = "p1Scores"></h2>
+	<h2 id = "p2Scores"></h2>
+	<h2 id = "temp"></h2>
+	
+	<h2 id = "p1Turns"></h2>
+	
+	<h2 id = "endMsg"></h2>
+	<button hidden id = "refresh" onClick="history.go(0)">Start new game</button>
+	</div>
+	
+</body>
+</html>

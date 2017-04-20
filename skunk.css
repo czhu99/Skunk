@@ -1,0 +1,46 @@
+
+h1 {
+    color: #358BDE;
+	font-family: "Roboto";
+	font-weight: 400;
+	text-align: center;
+}
+h2 {
+    color: #358BDE;
+	font-family: "Roboto";
+	font-weight: 400;
+}
+
+p{
+	font-family: "Roboto";
+	font-weight: 400;
+}
+
+button {
+    background-color: #358BDE; 
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.img-main{
+	display: block;
+	margin: 0 auto;	
+}
+
+.img-dice{
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;	
+}
+
+.wrapper{
+	text-align: center;
+}
+
+#dice{
+	text-align:center;
+}
